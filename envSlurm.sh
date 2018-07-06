@@ -10,10 +10,10 @@
 #     $ sbatch --partition=VM envSlurm.sh
 #
 
-#SBATCH --workdir=/slurm_storage/mbopf/projects/SegAN
+#SBATCH --workdir=/slurm_storage/public/AMIT/projects/SegAN
 #SBATCH --output=slurmOut/slurm_%j.out
 #SBATCH --error=slurmOut/slurm_%j.error
-#SBATCH --job-name=BopfEnvTest
+#SBATCH --job-name=AmitEnvTest
 #SBATCH --partition=dgx1
 
 env | sort
@@ -21,7 +21,9 @@ nvidia-smi
 nvcc --version
 uptime
 python --version
-ps -aux | grep mbopf | grep -v grep
+#ps -aux | grep mbopf | grep -v grep
+#ps -aux | grep rlong | grep -v grep
+#ps -aux | grep quintansda | grep -v grep
 
-python testSlurm.py
+python testPython.py
 

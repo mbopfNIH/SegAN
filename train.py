@@ -15,11 +15,21 @@ import torch.nn.functional as F
 from net import NetS, NetC
 from LoadData import Dataset, loader, Dataset_val
 
+# Debug MWB
+import sys
+print('__Python VERSION:', sys.version)
+print('__pyTorch VERSION:', torch.__version__)
+print('__CUDNN VERSION:', torch.backends.cudnn.version())
+print('__Number CUDA Devices:', torch.cuda.device_count())
+print('Active CUDA Device: GPU', torch.cuda.current_device())
+print ('Available devices ', torch.cuda.device_count())
+# End Debug MWB
 
 # Training settings
 parser = argparse.ArgumentParser(description='Example')
 parser.add_argument('--batchSize', type=int, default=36, help='training batch size')
-parser.add_argument('--niter', type=int, default=10000, help='number of epochs to train for')
+#parser.add_argument('--niter', type=int, default=10000, help='number of epochs to train for') # MWB - way too high
+parser.add_argument('--niter', type=int, default=200, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.0002, help='Learning Rate. Default=0.02')
 parser.add_argument('--ngpu', type=int, default=1, help='number of GPUs to use, for now it only supports one GPU')
 parser.add_argument('--beta1', type=float, default=0.5, help='beta1 for adam. default=0.5')
@@ -98,7 +108,9 @@ optimizerD = optim.Adam(NetC.parameters(), lr=lr, betas=(opt.beta1, 0.999))
 # load training data
 dataloader = loader(Dataset('./'),opt.batchSize)
 # load testing data
-dataloader_val = loader(Dataset_val('./'), 36)
+# MWB - To reduce memory, val needs to use batchSize, too
+#dataloader_val = loader(Dataset_val('./'), 36) 
+dataloader_val = loader(Dataset_val('./'), opt.batchSize)
 
 
 max_iou = 0

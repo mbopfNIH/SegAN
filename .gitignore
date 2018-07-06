@@ -1,10 +1,13 @@
+*.swp
 .idea
+*.pyc
 ISIC-2017_Test_v2_Data
 ISIC-2017_Test_v2_Part1_GroundTruth
 ISIC-2017_Training_Data
 ISIC-2017_Training_Part1_GroundTruth
 __pycache__
-old
-slurmOut
-outputs
+outputs*/
 queuedSlurmJobs.png
+seganSlurm-rl.sh
+slurmOut/
+test*.out
