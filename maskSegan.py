@@ -1,7 +1,8 @@
 from __future__ import print_function
+import argparse
 from PIL import Image, ImageDraw
 import os
-import sys
+from ast import literal_eval
 
 ############################################################################################
 #
@@ -27,12 +28,14 @@ def maskSegan(input='input.png', label='label.png', color=(0,0,255), output='mas
         return
     
     try:
+        print(type(color))
+        color = literal_eval(color)
         img = Image.new('RGB', (1000,1000), color)
 #        img.show()
     except:
         print("Error: Invalid input color: ", color)
         return
-        
+
     input_img = Image.open(input)
     input_img.show()
     mask = Image.open(label).convert("L")
@@ -43,9 +46,16 @@ def maskSegan(input='input.png', label='label.png', color=(0,0,255), output='mas
     input_img.paste(mask_color, (0,0), mask_color)
     input_img.show()
 
-    # Write out both the colorMask and the merged output file
+    # Write out the merged output file
     # NOTE: this overwrites the file!
-    mask_color.save('colorMask.png')
     input_img.save(output)
 
-maskSegan()
+# Use argparse to take in command line arguments
+parser = argparse.ArgumentParser(description='Example')
+parser.add_argument('-i', '--input', default='input.png', help='original input image')
+parser.add_argument('-l', '--label', default='label.png', help='label mask image')
+parser.add_argument('-c', '--color', default='(0,0,255)', help='color of overlaid mask')
+parser.add_argument('-o', '--output', default='maskedOut.png', help='masked output file name')
+opts = parser.parse_args()
+
+maskSegan(opts.input, opts.label, opts.color, opts.output)
