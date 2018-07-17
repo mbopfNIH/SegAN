@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --workdir=/slurm_storage/public/AMIT/projects/SegAN
+#SBATCH --workdir=.
 #SBATCH --output=slurmOut/slurm_%j.out
 #SBATCH --error=slurmOut/slurm_%j.error
 #SBATCH --job-name=SegAN_dgx
