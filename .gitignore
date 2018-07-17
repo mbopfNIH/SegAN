@@ -1,3 +1,5 @@
+*.jpg
+*.pth
 *.swp
 .idea
 *.pyc
