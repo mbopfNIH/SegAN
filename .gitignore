@@ -1,6 +1,9 @@
+*.jpg
+*.ods
+*.pth
+*.pyc
 *.swp
 .idea
-*.pyc
 ISIC-2017_Test_v2_Data
 ISIC-2017_Test_v2_Part1_GroundTruth
 ISIC-2017_Training_Data
