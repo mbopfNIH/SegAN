@@ -13,7 +13,7 @@ export LD_LIBRARY_PATH=/slurm_storage/public/cuda8/lib64${LD_LIBRARY_PATH:+:${LD
 # Dynamically create outputs directory
 mkdir outputs_$SLURM_JOB_ID
 
-env | sort
-nvidia-smi
-nvcc --version
+#env | sort
+#nvidia-smi
+#nvcc --version
 python train.py --cuda --batchSize 4 --niter 200 --outpath ./outputs_$SLURM_JOB_ID
