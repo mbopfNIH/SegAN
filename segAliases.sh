@@ -8,6 +8,7 @@ alias sidall='sinfo --partition=dgx1 -N -o=%all'
 alias sq='squeue'
 alias smid='srun --partition=dgx1 nvidia-smi'
 alias smiv='srun nvidia-smi' # only displays first node
+alias smidl='srun --partition=dgx1 nvidia-smi -l '
 
 ################################
 # SegAN directory aliases #
