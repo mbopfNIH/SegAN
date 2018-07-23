@@ -3,6 +3,8 @@ import argparse
 from PIL import Image, ImageDraw
 import os
 from ast import literal_eval
+import matplotlib.pyplot as plt
+
 
 ############################################################################################
 #
@@ -19,7 +21,7 @@ from ast import literal_eval
 #
 # 17 July 2018 - Mike Bopf
 ############################################################################################
-def maskSegan(input='input.png', label='label.png', color=(0,0,255), output='maskedOut.png'):
+def maskSegan(input, label, result, color, labelmaskfile, resultmaskfile):
     if not os.path.isfile(input):
         print("Error: Input file does not exist: ", input)
         return
@@ -28,7 +30,6 @@ def maskSegan(input='input.png', label='label.png', color=(0,0,255), output='mas
         return
     
     try:
-        print(type(color))
         color = literal_eval(color)
         img = Image.new('RGB', (1000,1000), color)
 #        img.show()
@@ -37,25 +38,33 @@ def maskSegan(input='input.png', label='label.png', color=(0,0,255), output='mas
         return
 
     input_img = Image.open(input)
-    input_img.show()
     mask = Image.open(label).convert("L")
-    mask_color = Image.new('RGBA', input_img.size, color)
+
+    color_mask = Image.new('RGBA', input_img.size, color)
     
-    mask_color.putalpha(mask)
-    mask_color.show()
-    input_img.paste(mask_color, (0,0), mask_color)
-    input_img.show()
+    color_mask.putalpha(mask)
+    input_img.paste(color_mask, (0,0), color_mask)
+    result_img = Image.open(result)
 
     # Write out the merged output file
     # NOTE: this overwrites the file!
-    input_img.save(output)
+    input_img.save(labelmaskfile)
+
+    input_img = Image.open(input)
+    mask = Image.open(result).convert("L")
+    result_mask = Image.new('RGBA', input_img.size, color)
+    result_mask.putalpha(mask)
+    input_img.paste(result_mask, (0,0), result_mask)
+    input_img.save(resultmaskfile)
 
 # Use argparse to take in command line arguments
 parser = argparse.ArgumentParser(description='Example')
-parser.add_argument('-i', '--input', default='input.png', help='original input image')
-parser.add_argument('-l', '--label', default='label.png', help='label mask image')
-parser.add_argument('-c', '--color', default='(0,0,255)', help='color of overlaid mask')
-parser.add_argument('-o', '--output', default='maskedOut.png', help='masked output file name')
+parser.add_argument('--input', default='input_val.png', help='original input image')
+parser.add_argument('--label', default='label_val.png', help='label mask image')
+parser.add_argument('--result', default='result_val.png', help='label mask image')
+parser.add_argument('--color', default='(0,0,255)', help='color of overlaid mask')
+parser.add_argument('--labelmask', default='label_mask.png', help='masked label file name')
+parser.add_argument('--resultmask', default='result_mask.png', help='masked result file name')
 opts = parser.parse_args()
 
-maskSegan(opts.input, opts.label, opts.color, opts.output)
+maskSegan(opts.input, opts.label, opts.result, opts.color, opts.labelmask, opts.resultmask)
