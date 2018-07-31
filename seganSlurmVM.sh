@@ -16,4 +16,4 @@ mkdir outputs_$SLURM_JOB_ID
 #env | sort
 #nvidia-smi
 #nvcc --version
-python train.py --cuda --batchSize 4 --niter 200 --outpath ./outputs_$SLURM_JOB_ID
+python train.py --cuda --batchSize 8 --niter 200 --outpath ./outputs_$SLURM_JOB_ID
