@@ -31,6 +31,8 @@ parser.add_argument('--batchSize', type=int, default=36, help='training batch si
 #parser.add_argument('--niter', type=int, default=10000, help='number of epochs to train for') # MWB - way too high
 parser.add_argument('--niter', type=int, default=200, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.0002, help='Learning Rate. Default=0.02')
+# MWB - Adding hyperparameter K to make the Sigmoid activation function more dynamic (per Yuan)
+parser.add_argument('--k', type=float, default=1.0, help='Constant used to modify Sigmoid')
 parser.add_argument('--ngpu', type=int, default=1, help='number of GPUs to use, for now it only supports one GPU')
 parser.add_argument('--beta1', type=float, default=0.5, help='beta1 for adam. default=0.5')
 parser.add_argument('--decay', type=float, default=0.5, help='Learning rate decay. default=0.5')
@@ -90,10 +92,10 @@ cudnn.benchmark = True
 print('===> Building model')
 NetS = NetS(ngpu = opt.ngpu)
 # NetS.apply(weights_init)
-print(NetS)
+#print(NetS)
 NetC = NetC(ngpu = opt.ngpu)
 # NetC.apply(weights_init)
-print(NetC)
+#print(NetC)
 
 if cuda:
     NetS = NetS.cuda()
@@ -126,8 +128,8 @@ for epoch in range(opt.niter):
         target = target.type(torch.FloatTensor)
         target = target.cuda()
         output = NetS(input)
-        #output = F.sigmoid(output*k)
-        output = F.sigmoid(output)
+        output = F.sigmoid(output * opt.k)  # MWB
+        #output = F.sigmoid(output)
         output = output.detach()
         output_masked = input.clone()
         input_mask = input.clone()
@@ -212,17 +214,11 @@ for epoch in range(opt.niter):
         if mIoU > max_iou:
             max_iou = mIoU
             torch.save(NetS.state_dict(), '%s/NetS_epoch_%d.pth' % (opt.outpath, epoch))
-        vutils.save_image(data[0],
-                '%s/input_val.png' % opt.outpath,
-                normalize=True)
-        vutils.save_image(data[1],
-                '%s/label_val.png' % opt.outpath,
-                normalize=True)
-        pred = pred.type(torch.FloatTensor)
-        vutils.save_image(pred.data,
-                '%s/result_val.png' % opt.outpath,
-                normalize=True)
-    if epoch % 25 == 0:
+            vutils.save_image(data[0], '%s/input_val.png' % opt.outpath, normalize=True)
+            vutils.save_image(data[1], '%s/label_val.png' % opt.outpath, normalize=True)
+            pred = pred.type(torch.FloatTensor) 
+            vutils.save_image(pred.data, '%s/result_val.png' % opt.outpath, normalize=True)
+    if epoch % 25 == 0 and epoch != 0:
         lr = lr*decay
         if lr <= 0.00000001:
             lr = 0.00000001
