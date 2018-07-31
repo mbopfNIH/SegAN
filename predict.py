@@ -68,5 +68,6 @@ print("type(input.data) = ", type(input.data))
 pred = netS(input)
 print("type(pred) = ", type(pred))
 print("pred.size() = ", pred.size())
+vutils.save_image(pred.data, '%s/result_val.png' % opts.outdir, normalize=True)
 
 
