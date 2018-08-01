@@ -1,4 +1,6 @@
+*.jpg
 *.ods
+*.png
 *.pth
 *.pyc
 *.swp
