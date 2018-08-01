@@ -10,7 +10,7 @@ ISIC-2017_Test_v2_Part1_GroundTruth
 ISIC-2017_Training_Data
 ISIC-2017_Training_Part1_GroundTruth
 __pycache__
-outputs*/
+outputs_*/
 queuedSlurmJobs.png
 seganSlurm-rl.sh
 slurmOut/
