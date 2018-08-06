@@ -21,15 +21,14 @@ import matplotlib.pyplot as plt
 #
 # 17 July 2018 - Mike Bopf
 ############################################################################################
-def maskSegan(input, label, result, lcolor, rcolor, labelmaskfile, resultmaskfile, display, path):
+def maskSegan(input, label, result, lcolor, rcolor, labeloutfile, resultoutfile, blendoutfile, display, path, output):
 
-    print("path =",path)
     input = os.path.join(path, input)
-    if not os.path.exists(input):
+    if not os.path.isfile(input):
         print("Error: Input file does not exist:", input)
         return
     label = os.path.join(path, label)
-    if not os.path.exists(label):
+    if not os.path.isfile(label):
         print("Error: Label file does not exist:", label)
         return
     result = os.path.join(path, result)
@@ -62,7 +61,6 @@ def maskSegan(input, label, result, lcolor, rcolor, labelmaskfile, resultmaskfil
             ldata.append(lcolor)
     lmask = Image.new("RGBA", label_img.size)
     lmask.putdata(ldata)
-    lmask.show()
 
     result_img = Image.open(result)
     result_img = result_img.convert("L")
@@ -75,29 +73,27 @@ def maskSegan(input, label, result, lcolor, rcolor, labelmaskfile, resultmaskfil
             rdata.append(rcolor)
     rmask = Image.new("RGBA", result_img.size)
     rmask.putdata(rdata)
-    rmask.show()
 
+    # Blend the two masks equally
+    blend = Image.blend(rmask, lmask, 0.5)
+
+    # Open the original input image and paste the blended mask a top using the alpha
+    # values of the provided masks.
     input_img = Image.open(input)
+    input_img.paste(blend, (0,0), blend)
 
-    # color_mask = Image.new('RGBA', input_img.size, color)
-    #
-    # color_mask.putalpha(mask)
-    # input_img.paste(color_mask, (0,0), color_mask)
-    # result_img = Image.open(result)
-    #
-    # # Write out the merged output file
-    # # NOTE: this overwrites the file!
-    # input_img.save(labelmaskfile)
-    #
-    # input_img = Image.open(input)
-    # mask = Image.open(result).convert("L")
-    # result_mask = Image.new('RGBA', input_img.size, color)
-    # result_mask.putalpha(mask)
-    # input_img.paste(result_mask, (0,0), result_mask)
-    # input_img.save(resultmaskfile)
-    # if display:
-    #     result_mask.show()
-    #     input_img.show()
+    # Write out the merged output file
+    # NOTE: these overwrite the files!
+    if output:
+        lmask.save(os.path.join(path, labeloutfile))
+        rmask.save(os.path.join(path, resultoutfile))
+        input_img.save(os.path.join(path, blendoutfile))
+
+    # Display the images if the "display" argument is set
+    if display:
+        lmask.show()
+        rmask.show()
+        input_img.show()
 
 # Use argparse to take in command line arguments
 parser = argparse.ArgumentParser(description='Example')
@@ -108,9 +104,11 @@ parser.add_argument('--lcolor', default='(0,0,255,128)', help='color of label ma
 parser.add_argument('--rcolor', default='(255,0,0,128)', help='color of result mask')
 parser.add_argument('--labeloutfile', default='label_mask.png', help='masked label output file name')
 parser.add_argument('--resultoutfile', default='result_mask.png', help='masked result output file name')
-parser.add_argument('--display', default=False, help='Should masks attempt to be displayed')
+parser.add_argument('--blendoutfile', default='blend_mask.png', help='blended mask overlay output file name')
+parser.add_argument('--display', default=True, help='Should masks attempt to be displayed')
 parser.add_argument('--path', default='./', help='Directory path to prepend to all files')
+parser.add_argument('--output', default='True', help='Should output files be written')
 opts = parser.parse_args()
 
 maskSegan(opts.input, opts.label, opts.result, opts.lcolor, opts.rcolor, opts.labeloutfile,
-          opts.resultoutfile, opts.display, opts.path)
+          opts.resultoutfile, opts.blendoutfile, opts.display, opts.path, opts.output)
