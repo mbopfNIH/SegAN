@@ -1,3 +1,4 @@
+from __future__ import division    # MWB - added 2018.11.08
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
@@ -11,8 +12,14 @@ ndf = 64
 class GlobalConvBlock(nn.Module):
     def __init__(self, in_dim, out_dim, kernel_size):
         super(GlobalConvBlock, self).__init__()
-        pad0 = (kernel_size[0] - 1) / 2
-        pad1 = (kernel_size[1] - 1) / 2
+        # MWB - Switch to explicit integer division
+        # pad0 = (kernel_size[0] - 1) / 2
+        # pad1 = (kernel_size[1] - 1) / 2
+
+        pad0 = (kernel_size[0] - 1) // 2
+        pad1 = (kernel_size[1] - 1) // 2
+#        print("pad0 = {}; pad1 = {}".format(pad0, pad1))
+        # MWB - end changes
 
         self.conv_l1 = nn.Conv2d(in_dim, out_dim, kernel_size=(kernel_size[0], 1),
                                  padding=(pad0, 0))

@@ -1,3 +1,4 @@
+from __future__ import division    # MWB - added 2018.11.08
 import os
 import numpy as np
 from glob import glob
